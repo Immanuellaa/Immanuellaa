@@ -1,53 +1,67 @@
-# Define the directory structure using a dictionary
-directory_tree = {
-    "Pictures": {
-        "Saved Pictures": ["Web Images", "Chrome", "Opera", "Firefox"],
-        "Screenshots": [],
-        "Camera Roll": ["2025", "2024", "2023"]
-    }
-}
+class Node:
+    """ Node serves as a single linked list """
 
-# Function to display the directory structure
-def display_tree(directory, level=0):
-    """Recursively prints the directory structure in a tree format."""
-    for key, value in directory.items():
-        print("  " * level + "|-- " + key)
-        if isinstance(value, dict):  # If it's a dictionary, recurse
-            display_tree(value, level + 1)
-        elif isinstance(value, list):  # If it's a list, print the items
-            for item in value:
-                print("  " * (level + 1) + "|-- " + item)
+    def __init__(self, data, next_node=None):
+        """ Initialization of new data """
+        self.data = data
+        self.next_node = next_node
 
-# Function to add a new directory
-def add_directory(parent, new_directory):
-    """Adds a new directory under a specified parent directory."""
-    if parent in directory_tree:
-        directory_tree[parent][new_directory] = []
-    else:
-        for key, value in directory_tree.items():
-            if isinstance(value, dict) and parent in value:
-                directory_tree[key][parent][new_directory] = []
-                return
-    print(f"Parent directory '{parent}' not found.")
+    @property
+    def data(self):
+        """ Returns the value of data """
+        return self.__data
 
-# Function to delete a directory
-def delete_directory(directory):
-    """Deletes a directory and its subdirectories."""
-    for key, value in directory_tree.items():
-        if directory in value:
-            del directory_tree[key][directory]
-            return
-    print(f"Directory '{directory}' not found.")
+    @data.setter
+    def data(self, value):
+        """ Sets the value of data """
+        if not isinstance(value, int):
+            raise TypeError("data must be an integer")
+        self.__data = value
 
-# Display the initial structure
-print("Initial Directory Structure:")
-display_tree(directory_tree)
+    @property
+    def next_node(self):
+        """ Returns the value of the next node """
+        return self.__next_node
 
-# Example usage:
-print("\nAdding 'Downloads' under 'Pictures':")
-add_directory("Pictures", "Downloads")
-display_tree(directory_tree)
+    @next_node.setter
+    def next_node(self, value):
+        """ Sets the value of the next node """
+        if not isinstance(value, Node) and value is not None:
+            raise TypeError("next_node must be a Node object")
+        self.__next_node = value
 
-print("\nDeleting 'Saved Pictures':")
-delete_directory("Saved Pictures")
-display_tree(directory_tree)
+
+class SinglyLinkedList:
+    """ class to manage singly linked list operations """
+
+    def __str__(self):
+        """ prints the members of the singly linked list on a separate line """
+        rtn = ""
+        ptr = self.__head
+
+        while ptr is not None:
+            rtn += str(ptr.data)
+            if ptr.next_node is not None:
+                rtn += "\n"
+            ptr = ptr.next_node
+
+        return rtn
+
+    def __init__(self):
+        """ initialization of data into the new singly linked list """
+        self.__head = None
+
+    def sorted_insert(self, value):
+        ptr = self.__head
+
+        while ptr is not None:
+            if ptr.data > value:
+                break
+            ptr_prev = ptr
+            ptr = ptr.next_node
+
+        newNode = Node(value, ptr)
+        if ptr == self.__head:
+            self.__head = newNode
+        else:
+            ptr_prev.next_node = newNode
